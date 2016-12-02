@@ -32,8 +32,7 @@ public class SimpleClient {
 			    System.out.println(ioe.getMessage());
 			    ioe.printStackTrace();
 	    	}
-        }
-		
+        }	
 	}
 
 }
