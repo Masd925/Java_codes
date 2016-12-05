@@ -1,38 +1,34 @@
 package simple_server_and_client;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.net.Socket;
-
+import java.io.*;
+import java.net.*;
+ 
 public class SimpleClient {
-    
-	public static void main(String[] args) {
-        Socket socket = null;
-		BufferedReader input = null;
+    public static void main(String[] args) {
+         
+        String hostName = "localhost";
+        int portNumber = 9696;
         
-        try {
-        	socket = new Socket("localhost", 9696);
-        	input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String line;
-            while ((line=input.readLine())!=null) System.out.println("Client got response: " + line);
+        System.out.println("Client started");
+        try (
+            Socket socket = new Socket(hostName, portNumber);
+            PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
+        ) {
+            String userInput;
+            System.out.println("Type request for the server: ");
+            while ((userInput = stdIn.readLine()) != null) {
+            	if (userInput.equals("exit")) break;
+                output.println(userInput);
+                System.out.println("Got server response: " + input.readLine());
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Unknown host: " + hostName);
+        } catch (IOException e) {
+            System.err.println("Exception caught making connection to: " + hostName + "using port: " + portNumber);
+        } finally {
+        	System.out.println("Client stopped");
         }
-        catch (IOException ioe) {
-        	System.out.println("Problem with connection.");
-        	System.out.println(ioe.getMessage());
-		    ioe.printStackTrace();
-        }
-        finally {
-        	try {
-		        if (input != null) input.close();
-		        if (socket != null) socket.close();
-		    }
-		    catch (IOException ioe) {
-		    	System.out.println("Problem closing connection: ");
-			    System.out.println(ioe.getMessage());
-			    ioe.printStackTrace();
-	    	}
-        }	
-	}
-
+    }
 }
