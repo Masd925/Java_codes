@@ -31,9 +31,6 @@ public class PersonListFetcher {
 		catch (SQLException sqlE) {
 			System.out.println("Problem executing sql query.");
 		}
-		finally {
-			
-		}
 		return list;
 	}
 	
